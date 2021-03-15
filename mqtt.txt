@@ -1,0 +1,281 @@
+一、手动安装
+
+172.16.XX1
+172.16.XX2
+172.16.XX3
+
+1, install
+$wget https://github.com/emqx/emqx/archive/release-4.1.zip
+
+$yum install -y yum-utils device-mapper-persistent-data lvm2
+$ yum-config-manager --add-repo https://repos.emqx.io/emqx-ce/redhat/centos/7/emqx-ce.repo
+$ yum install emqx
+       
+2, start/stop
+  
+ 2.1  start / status
+ $ emqx start
+ 
+ EMQ X Broker 4.2.8 is started successfully!
+  
+ $emqx_ctl status
+  
+  2.2  sytemctl 
+  
+  $systemctl start emqx
+ 
+  2.3 service
+  
+  $service emqx start     
+    
+2.4 stop
+
+emqx stop
+
+2.5 Remove EMQ X Broker
+yum remove emqx
+
+2.6  状态查看
+emqx_ctl cluster status
+
+2.7 emqx console 查看启动日志
+
+2.8 emqx_ctl cluster status
+
+
+3 配置
+
+3.1 启动
+
+/bin/emqx 
+
+3.2 配置
+ /etc/emqx
+/usr/lib/emqx 
+
+4 cluster
+
+4.1 通用配置
+vi /etc/emqx/emqx.conf
+
+cluster.name = emqx-cluster
+node.name=emqx1@172.16.XX （默认ekka mode ,端口 4371
+cluster.static.seeds = emqx1@172.16.XX, emqx2@172.16.XX, emqx3@172.16.XX
+
+
+4.2 集群操作
+
+4.2.1 当前节点从集群离开
+
+emqx_ctl cluster leave
+
+4.2.2 强行删除节点
+
+emqx_ctl cluster force-leave emqx@s2.emqx.io
+
+检查4371端口开放 :
+netstat -atnp|grep 4371
+
+节点加入集群：
+
+emqx_ctl cluster join emqx1@172.16.XX1
+emqx_ctl cluster join emqx2@172.16.XX2
+emqx_ctl cluster join emqx3@172.16.XX3
+
+
+修改dashboard 端口：
+
+vi /etc/emqx/plugins/emqx_dashboard.conf
+
+dashboard.listener.http = 61613
+
+http://172.16.XX:61613
+
+admin/public
+
+
+
+
+
+          
+          
+    二、docker 集群      
+          
+ 1,  ssh 免密登录
+172.16.XX, 172.16.XX, 172.16.XX 做好免密登录
+(1) ssh-keygen -t rsa
+
+172.16.XX1 上执行： 
+echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDXYFRwLUwbd1DpFePIpWnT4MprtWItcXxRLom0VzmoE6asGAozYTXY8T0mEel5tYnLYv37xTO3XlSJebZBkOWvYkcUwmUISYdL6arw9trTQ+G85LfZ0ck7JqpU6TdC1zlaHqkvGXb2n03hqY3DmHoMIKEXPrB2lmaW+1FgkCVEpWA+yghphp+sDwF5Ru5DwsJLxZDnCwYR43h6BEnUfp5sksT28tVoOY7z15aZH0alAWjp6NKMoqjU/VU9pNStW5mk7xAuqUpAph27jxpK/UTcrOb+0khXHP2lTkl/xhgSy0Gz2oOkyIRCXh4MN4wRueBh77Mqp6jooAO2XXM0j28d root@test-mix-sit-1-aliyun-xx1-remacsmart'  >> ~/.ssh/authorized_keys     
+echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDM4ti7/Ts2knW6uxdtcsVJKQVtmqLhiZnHdusAovSU0wO2rzUUcZ0+zDfK95aJCBIALCKrqsc0eI/7FPoco9JJthT/InR/+Rv0AksQPDkD7KDa/d3KMhKSpPRjj6tNGH50owr2QVD9XfrGhBrrniTPKea336pn94v/iHo68D8ER+tuiBOUtx2VoEQAXXXXq8wVtO63H/+GEUomNdOTtq30+VqIqhvArAn57egyPHCpm14wbeLYOa0UVhEQXUXkZPk6lZCT1pprcKlABrkK3DfOYZdWN3VfcdLxJ+phNQZ6cTTg+zcEdKDP+qTdzgslNtfms/LVtjYDWRqGkjTkEFcD root@test-mix-sit-2-aliyun-xx2-remacsmart'  >> ~/.ssh/authorized_keys  
+
+172.16.XX2 上执行：
+
+echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCj2lhdfGC9fLOpo78RaOmUxtSgBnYIZ2pkJGRy9q1zlBzmO/m6zJEFQn3TkZsv/yr5AaIgAMxJ/+OE9S/9jWVY+Mmpzk8mF9FixVZjR8Z4WZP83E/iG5Iq/e/ehA8uNKxl0Ejv2AVYzm3FQzAqrZrOx5fjgQQbVlYnPX0piErvIvFtU/SYjGo57PK7d8lfa41bGV/FqLuG56JOXp3UObwwm6K6wep71TmogQL7GhF8L6ieKohgOUCyZ5OEzf3cT3+iAuld5mWd6dL7CAZrrqtbCPU/12XK7aswSI7XBzzrsYXY6pmA8u2ugr8zzD80J2th/Gib+nDsVdQA8YEFOBeL root@test-mix-sit-3-aliyun-xx3-remacsmart'  >> ~/.ssh/authorized_keys   
+
+172.16.XX3 上执行：
+echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCj2lhdfGC9fLOpo78RaOmUxtSgBnYIZ2pkJGRy9q1zlBzmO/m6zJEFQn3TkZsv/yr5AaIgAMxJ/+OE9S/9jWVY+Mmpzk8mF9FixVZjR8Z4WZP83E/iG5Iq/e/ehA8uNKxl0Ejv2AVYzm3FQzAqrZrOx5fjgQQbVlYnPX0piErvIvFtU/SYjGo57PK7d8lfa41bGV/FqLuG56JOXp3UObwwm6K6wep71TmogQL7GhF8L6ieKohgOUCyZ5OEzf3cT3+iAuld5mWd6dL7CAZrrqtbCPU/12XK7aswSI7XBzzrsYXY6pmA8u2ugr8zzD80J2th/Gib+nDsVdQA8YEFOBeL root@test-mix-sit-3-aliyun-xx3-remacsmart'  >> ~/.ssh/authorized_keys   
+
+2, swarm 主节点
+
+2.1 先将主节点防火墙关闭
+#systemctl stop firewalld
+#docker swarm init --advertise-addr  172.16.xx1
+
+返回：
+
+docker swarm join \
+    --token SWMTKN-1-2v5urthk5o32z6h08l4cway9gvgb3bjfxmvinc2vjwer4espcc-edpusqar5r9pl9v943uwwka2r \
+    172.16.XX1:2377
+
+ 2,  在 172.16.XX2， 172.16.XX3上依次执行
+ 
+ docker swarm join --token SWMTKN-1-2v5urthk5o32z6h08l4cway9gvgb3bjfxmvinc2vjwer4espcc-edpusqar5r9pl9v943uwwka2r 172.16.XX1:2377
+
+ 
+ 3, 在主节点查看集群节点
+ #docker node ls
+ ID                           HOSTNAME                                STATUS  AVAILABILITY  MANAGER STATUS
+7mxnk1hrqcikedzm1o4w5430o    test-mix-sit-3-aliyun-3-XX1-remacsmart  Ready   Active        
+nhw5hep9k38bpa4h5s5cyrdnf    test-mix-sit-2-aliyun-3-XX2-remacsmart  Ready   Active        
+v7xw9n85q1c7kxdowyol0xf3q *  test-mix-sit-1-aliyun-3-XX3-remacsmart  Ready   Active        Leader
+
+4, 移除节点
+
+4.1 从节点从集群中移出
+docker swarm  leave 
+4.2 从节点从集群中删除
+docker node  rm  node02 
+
+4.3 删除整个集群
+docker swarm leave -f
+
+docker node inspect [nodeName]
+ 
+ 4.4 查看节点的状态
+ 
+ docker node inspect  ID
+ 
+ 
+ 4.5 overlay网络
+ 
+ docker network create -d overlay --attachable --subnet=172.16.XX.0/24  my-emqx_emq-net 
+ 
+ docker stack deploy -c  docker-compose.yml  emq
+
+ docker stack ls
+ 
+ docker stack rm ID
+ 
+ 
+ 4.6 给节点指定label
+ 
+ docker node update --label-add role=emqx1  test-mix-sit-1-aliyun-3-XX1-remacsmart 
+ docker node update --label-add role=emqx2  test-mix-sit-2-aliyun-3-XX2-remacsmart
+ docker node update --label-add role=emqx3  test-mix-sit-3-aliyun-3-XX3-remacsmart
+ 
+ 
+ 4.7 查看label有无生效
+ 
+ $docker node ls 
+ 
+ deploy:
+  replicas: 1
+     placement:
+        constraints:
+          - node.hostname == test-mix-sit-1-aliyun-3-XX1-remacsmart 
+          
+          
+ 4.8 deploy          
+
+ 
+ $docker stack deploy -c  docker-compose.yml  my-emq
+ 
+ 
+5 nginx upstream TCP redirect for SLB
+ 
+ 
+ user  root;
+worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+ 
+    sendfile        on;
+   
+    keepalive_timeout  65;
+
+   
+server {
+        listen       61613;
+        #server_name  mqtt.sit.remacsmart.com; 
+        server_name  172.16.XX1;
+        location / {    
+             proxy_pass http://172.16.XX1:61613;
+        }
+}
+
+
+
+}
+
+stream {
+    log_format tcp '$remote_addr [$time_local] '
+                 '$protocol $status $bytes_sent $bytes_received '
+                 '$session_time "$upstream_addr" '
+                 '"$upstream_bytes_sent" "$upstream_bytes_received" "$upstream_connect_time"';
+
+    upstream mqtt {
+        server 172.16.XX1:1883;
+        server 172.16.XX2:1883; 
+        server 172.16.XX3:1883;
+    }
+
+   server {
+       listen 1883;
+       access_log  logs/tcp-mqtt.access.log  tcp;
+       error_log   logs/tcp-mqtt.error.log;
+
+       proxy_pass mqtt;
+   }
+
+   upstream tuoqiao {
+       server 172.16.XX1:1831;
+       server 172.16.XX2:1831;
+       server 172.16.XX3:1831;
+   }
+  
+  
+   server {
+       listen 1831;
+       access_log  logs/tcp-tuoqiao.access.log  tcp;
+       error_log   logs/tcp-tuoqiao.error.log;
+       proxy_pass tuoqiao;
+       charset utf-8;
+   }
+}
+
+ 
+6 测试TCP端口情况：
+ 
+telnet IP 1832
+telnet IP 1884
+telnet IP 61614
+
+7 模拟TCP发数据：
+curl telnet://IP:1832 <<< Hello
+telnet IP 61614
+
+
+ 
