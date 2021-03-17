@@ -64,6 +64,7 @@ cluster.static.seeds = emqx1@172.16.XX, emqx2@172.16.XX, emqx3@172.16.XX
 #共享订阅
 broker.shared_subscription_strategy = random
 broker.shared_dispatch_ack_enabled = false
+mqtt.shared_subscription = true
 
 
 4.2 集群操作
