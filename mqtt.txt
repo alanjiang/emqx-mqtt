@@ -61,6 +61,8 @@ vi /etc/emqx/emqx.conf
 cluster.name = emqx-cluster
 node.name=emqx1@172.16.XX （默认ekka mode ,端口 4371
 cluster.static.seeds = emqx1@172.16.XX, emqx2@172.16.XX, emqx3@172.16.XX
+#共享订阅
+broker.shared_subscription_strategy = random
 
 
 4.2 集群操作
