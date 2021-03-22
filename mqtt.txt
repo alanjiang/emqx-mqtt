@@ -282,4 +282,12 @@ curl telnet://IP:1832 <<< Hello
 telnet IP 61614
 
 
+
+8 SSH 免密不成功：
+
+ $vi /etc/ssh/sshd_config
  
+ PermitRootLogin yes
+ 
+$systemctl restart sshd.service
+
