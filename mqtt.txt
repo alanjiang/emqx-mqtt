@@ -66,6 +66,13 @@ broker.shared_subscription_strategy = random
 broker.shared_dispatch_ack_enabled = false
 mqtt.shared_subscription = true
 
+cluster.discovery = static
+
+集群采用静态发现，不需要手动添加。
+
+
+
+
 
 4.2 集群操作
 
@@ -97,7 +104,25 @@ http://172.16.XX:61613
 
 admin/public
 
+4.3 配置用户名、密码
 
+(1) /app/emqx-docker/emqx/etc/emqx.conf
+
+allow_anonymous = true
+
+(2) /app/emqx-docker/emqx/etc/plugins/emqx_auth_username.conf
+
+auth.user.1.username = admin
+auth.user.1.password = Xmartzy$XXXX
+auth.user.2.username = mqtt
+auth.user.2.password = mqtt$XXXX
+auth.user.password_hash = sha256
+
+执行:
+
+cd  /app/emqx-docker/emqx/bin/
+
+./emqx_ctl plugins load emqx_auth_username
 
 
 
