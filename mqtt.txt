@@ -106,9 +106,15 @@ admin/public
 
 4.3 配置用户名、密码
 
+ 版本：emqx-centos7-v4.1.5.zip
+ 
+ netstat -atnp|grep beam 
+ 
+ 
+
 (1) /app/emqx-docker/emqx/etc/emqx.conf
 
-allow_anonymous = true
+allow_anonymous = false
 
 (2) /app/emqx-docker/emqx/etc/plugins/emqx_auth_username.conf
 
