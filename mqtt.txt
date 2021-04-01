@@ -114,7 +114,20 @@ admin/public
 
 (1) /app/emqx-docker/emqx/etc/emqx.conf
 
+Enable MQTT topic rewrite
+
 allow_anonymous = false
+
+
+module.rewrite = off
+
+配置主题重写：
+
+module.rewrite.rule.1 = stds/up/CL/#  ^stds/up/CL/(.+)$ stds/up/CL/$2
+module.rewrite.rule.2 = stds/offline/CL/#  ^stds/offline/CL/(.+)$ stds/offline/CL/$2
+
+
+
 
 (2) /app/emqx-docker/emqx/etc/plugins/emqx_auth_username.conf
 
