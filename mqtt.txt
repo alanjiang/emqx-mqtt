@@ -122,13 +122,19 @@ auth.user.1.username = admin
 auth.user.1.password = Xmartzy$XXXX
 auth.user.2.username = mqtt
 auth.user.2.password = mqtt$XXXX
+
+
 auth.user.password_hash = sha256
 
-执行:
+第一次执行:
 
 cd  /app/emqx-docker/emqx/bin/
 
 ./emqx_ctl plugins load emqx_auth_username
+
+非首次执行：
+
+./emqx_ctl plugins reload emqx_auth_username
 
 
 
