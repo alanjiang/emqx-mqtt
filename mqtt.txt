@@ -20,13 +20,16 @@ $ yum install emqx
   
  $emqx_ctl status
   
-  2.2  sytemctl 
   
-  $systemctl start emqx
- 
-  2.3 service
+  start:
   
-  $service emqx start     
+  
+  /app/emqx-docker/emqx/bin/emqx start
+  
+  stop:
+  
+  netstat -atnp|grep beam
+  
     
 2.4 stop
 
@@ -67,6 +70,7 @@ broker.shared_dispatch_ack_enabled = false
 mqtt.shared_subscription = true
 
 cluster.discovery = static
+
 
 集群采用静态发现，不需要手动添加。
 
